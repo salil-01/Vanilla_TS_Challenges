@@ -1,15 +1,14 @@
+"use strict";
 // src/index.ts
+const pageMap = ["my-christmas-list"];
 
-// TypeScript Example: A simple function that greets a user
-function greet(name: string): string {
-  return `Hello, ${name}! Welcome to Vanilla TypeScript!`;
-}
-
-// Attach event listener to a button
-const button = document.createElement("button");
-button.innerText = "Click Me!";
-button.onclick = () => {
-  alert(greet("TypeScript Developer"));
-};
-
-document.body.appendChild(button);
+(() => {
+  const container = document.getElementById("#container");
+  if (container) {
+    pageMap.forEach((el) => {
+      const pageLink = document.createElement("a");
+      pageLink.href = el;
+      container.appendChild(pageLink);
+    });
+  }
+})();

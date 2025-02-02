@@ -21,3 +21,52 @@ For example, only one of these entries should be added to the list — the other
 
 2. Additional Features: Add functionality to delete or edit items on the list.
 */
+
+// array to store list items
+const christmasList: string[] = [];
+
+// grabbing elements by their id's
+const addItemButton = document.getElementById("add-item-button");
+const inputElement = document.getElementById("item-input") as HTMLInputElement;
+const listItemContainer = document.getElementById("shopping-list");
+
+//  validation fnctnc which checks for duplicacy and also handles capitalization difference
+const validateInputText = (text: string) => {
+  try {
+    let sanitizedText = "";
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] !== " ") {
+        sanitizedText += text[i].toLowerCase();
+      }
+    }
+    const isDuplicate = christmasList.find((el) => el === sanitizedText);
+    return { isDuplicate, sanitizedText };
+  } catch (error) {
+    console.error(error);
+    //  returning false incase validation fails
+    return { isDuplicate: false, sanitizedText: "" };
+  }
+};
+
+// helper function to remove white space at beginning end and start
+
+// add button click handling
+addItemButton?.addEventListener("click", () => {
+  if (inputElement) {
+    const inputElementText = inputElement.value; // grabbing text from input box
+    const { isDuplicate, sanitizedText } = validateInputText(inputElementText); // validating text with helper fnctn
+    if (isDuplicate) {
+      alert("Item already exists!");
+      // returning if same item is added
+      return;
+    }
+    if (listItemContainer) {
+      // checking if container exists then add to christmas list
+      const listItem = document.createElement("li");
+      listItem.textContent = inputElementText;
+      listItemContainer.appendChild(listItem);
+    }
+    christmasList.push(sanitizedText); // adding in array as well for validation
+    inputElement.value = ""; // clearing out the input field
+  }
+});

@@ -23,49 +23,71 @@ For example, only one of these entries should be added to the list — the other
 2. Additional Features: Add functionality to delete or edit items on the list.
 */
 // array to store list items
-const christmasList = [];
+// const christmasList: string[] = [];
+const sanitizedList = [];
+let index = 0;
 // grabbing elements by their id's
 const addItemButton = document.getElementById("add-item-button");
 const inputElement = document.getElementById("item-input");
 const listItemContainer = document.getElementById("shopping-list");
 //  validation fnctnc which checks for duplicacy and also handles capitalization difference
 const validateInputText = (text) => {
-  try {
-    let sanitizedText = "";
-    for (let i = 0; i < text.length; i++) {
-      if (text[i] !== " ") {
-        sanitizedText += text[i].toLowerCase();
-      }
+    try {
+        let sanitizedText = "";
+        for (let i = 0; i < text.length; i++) {
+            if (text[i] !== " ") {
+                sanitizedText += text[i].toLowerCase();
+            }
+        }
+        const isDuplicate = sanitizedList.find((el) => el === sanitizedText);
+        return { isDuplicate, sanitizedText };
     }
-    const isDuplicate = christmasList.find((el) => el === sanitizedText);
-    return { isDuplicate, sanitizedText };
-  } catch (error) {
-    console.error(error);
-    //  returning false incase validation fails
-    return { isDuplicate: false, sanitizedText: "" };
-  }
+    catch (error) {
+        console.error(error);
+        //  returning false incase validation fails
+        return { isDuplicate: false, sanitizedText: "" };
+    }
 };
-// helper function to remove white space at beginning end and start
-// add button click handling
-addItemButton === null || addItemButton === void 0
-  ? void 0
-  : addItemButton.addEventListener("click", () => {
-      if (inputElement) {
+// let's add a edit list item functionality as well
+const editListItem = (listItem) => {
+    const newValue = prompt("Enter value to update list");
+    if (newValue && listItem.firstChild) {
+        listItem.firstChild.textContent = newValue;
+    }
+};
+// add button click handling => to add items in list
+addItemButton === null || addItemButton === void 0 ? void 0 : addItemButton.addEventListener("click", () => {
+    if (inputElement) {
         const inputElementText = inputElement.value; // grabbing text from input box
-        const { isDuplicate, sanitizedText } =
-          validateInputText(inputElementText); // validating text with helper fnctn
+        // validating if there is some value inside input box
+        if (!inputElementText) {
+            alert("Item can't be empty");
+            return;
+        }
+        const { isDuplicate, sanitizedText } = validateInputText(inputElementText); // validating text with helper fnctn
         if (isDuplicate) {
-          alert("Item already exists!");
-          // returning if same item is added
-          return;
+            alert("Item already exists!");
+            // returning if same item is added
+            return;
         }
         if (listItemContainer) {
-          // checking if container exists then add to christmas list
-          const listItem = document.createElement("li");
-          listItem.textContent = inputElementText;
-          listItemContainer.appendChild(listItem);
+            // appending in dom
+            const listItem = document.createElement("li");
+            // p tag to store the list item text
+            const textElement = document.createElement("p");
+            // edit button
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.onclick = () => editListItem(listItem);
+            textElement.textContent = inputElementText;
+            listItem.appendChild(textElement);
+            listItem.appendChild(editButton);
+            // adding data-index attribute in each list item for edit and delete part
+            listItem.setAttribute("data-index", `${index}`);
+            listItemContainer.appendChild(listItem);
+            index++;
         }
-        christmasList.push(sanitizedText); // adding in array as well for validation
+        sanitizedList.push(sanitizedText); // adding in array as well for validation
         inputElement.value = ""; // clearing out the input field
-      }
-    });
+    }
+});
